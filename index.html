@@ -1,0 +1,559 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏰 إمبراطورية الملوك - أسطورة البناء والفتح</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="ابن إمبراطوريتك من الصفر - لعبة استراتيجية ملكية">
+</head>
+<body>
+    <!-- شاشة التحميل المحسنة -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-crown">👑</div>
+            <h1>إمبراطورية الملوك</h1>
+            <div class="loading-subtitle">أسطورة البناء والفتح</div>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loading-progress"></div>
+            </div>
+            <p id="loading-text">جاري تحميل عالم المملكة...</p>
+            <div class="loading-tips">
+                <div class="tip-text" id="loading-tip">💡 استخدم الموارد بحكمة لبناء إمبراطورية قوية</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- شريط الإحصائيات المحسن -->
+    <div class="stats-bar" id="stats-bar">
+        <div class="crown-logo">
+            <span class="crown-icon">👑</span>
+            <span class="kingdom-name">مملكة الفجر الذهبي</span>
+        </div>
+        
+        <div class="primary-stats">
+            <div class="stat-item" data-tooltip="الذهب المتاح للإنفاق">
+                <div class="stat-icon">💰</div>
+                <div class="stat-label">ذهب</div>
+                <div id="gold" class="stat-value">1000</div>
+            </div>
+            
+            <div class="stat-item" data-tooltip="عدد السكان في المملكة">
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">سكان</div>
+                <div id="population" class="stat-value">100</div>
+            </div>
+            
+            <div class="stat-item" data-tooltip="مستوى رضا الشعب">
+                <div class="stat-icon">😊</div>
+                <div class="stat-label">رضا</div>
+                <div id="happiness" class="stat-value">75%</div>
+            </div>
+            
+            <div class="stat-item" data-tooltip="مستوى الأمان والحماية">
+                <div class="stat-icon">🛡️</div>
+                <div class="stat-label">أمان</div>
+                <div id="security" class="stat-value">60%</div>
+            </div>
+            
+            <div class="stat-item" data-tooltip="مخزون الطعام">
+                <div class="stat-icon">🌾</div>
+                <div class="stat-label">طعام</div>
+                <div id="food" class="stat-value">500</div>
+            </div>
+        </div>
+
+        <div class="secondary-stats">
+            <div class="stat-item resource-stat">
+                <div class="stat-icon">🪵</div>
+                <div class="stat-label">خشب</div>
+                <div id="wood" class="stat-value">300</div>
+            </div>
+            
+            <div class="stat-item resource-stat">
+                <div class="stat-icon">🪨</div>
+                <div class="stat-label">حجر</div>
+                <div id="stone" class="stat-value">200</div>
+            </div>
+            
+            <div class="stat-item resource-stat">
+                <div class="stat-icon">⚒️</div>
+                <div class="stat-label">حديد</div>
+                <div id="iron" class="stat-value">100</div>
+            </div>
+        </div>
+
+        <div class="time-weather-info">
+            <div class="time-display">
+                <div class="year-month">
+                    <span id="game-year">1</span> - شهر <span id="game-month">1</span>
+                </div>
+                <div id="day-night-indicator" class="day-night">☀️ نهار</div>
+                <div id="weather" class="weather">🌤️ معتدل</div>
+            </div>
+            <div id="threat-level-indicator" class="threat-indicator">
+                <span class="threat-icon">⚠️</span>
+                <span id="threat-level">منخفض</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- الحاوية الرئيسية للعبة -->
+    <div class="game-container">
+        <!-- اللوحة اليسرى - التحكم والبناء -->
+        <div class="left-panel">
+            <div class="control-panel">
+                <h3>🏗️ مركز القيادة الملكي</h3>
+                
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="buildings">🏘️ مباني</button>
+                    <button class="tab-btn" data-tab="policies">⚖️ سياسات</button>
+                    <button class="tab-btn" data-tab="military">⚔️ جيش</button>
+                    <button class="tab-btn" data-tab="research">🔬 بحث</button>
+                    <button class="tab-btn" data-tab="workers">👷 عمال</button>
+                </div>
+
+                <!-- تبويب المباني المحسن -->
+                <div id="buildings-tab" class="tab-content active">
+                    <div class="building-categories">
+                        <div class="category-filter">
+                            <button class="filter-btn active" data-filter="all">الكل</button>
+                            <button class="filter-btn" data-filter="residential">سكني</button>
+                            <button class="filter-btn" data-filter="resource">موارد</button>
+                            <button class="filter-btn" data-filter="military">عسكري</button>
+                            <button class="filter-btn" data-filter="commercial">تجاري</button>
+                        </div>
+                    </div>
+                    
+                    <div class="building-grid" id="buildings-grid">
+                        <!-- المباني السكنية -->
+                        <div class="building-card" data-building="house" data-category="residential">
+                            <div class="building-icon">🏠</div>
+                            <div class="building-name">منزل</div>
+                            <div class="building-cost">💰30 🪵20 🪨10</div>
+                            <div class="building-benefit">+8 سكان، +2 رضا</div>
+                            <div class="building-description">مساكن للعائلات</div>
+                        </div>
+                        
+                        <!-- المباني الاقتصادية -->
+                        <div class="building-card" data-building="farm" data-category="resource">
+                            <div class="building-icon">🌾</div>
+                            <div class="building-name">مزرعة</div>
+                            <div class="building-cost">💰50 🪵30 🪨5</div>
+                            <div class="building-benefit">+25 طعام</div>
+                            <div class="building-description">تنتج الطعام</div>
+                        </div>
+                        
+                        <div class="building-card" data-building="market" data-category="commercial">
+                            <div class="building-icon">🏪</div>
+                            <div class="building-name">سوق</div>
+                            <div class="building-cost">💰80 🪵40 🪨20</div>
+                            <div class="building-benefit">+20 ذهب، +5 رضا</div>
+                            <div class="building-description">مركز تجاري</div>
+                        </div>
+                        
+                        <!-- مباني الموارد -->
+                        <div class="building-card" data-building="lumbermill" data-category="resource">
+                            <div class="building-icon">🪓</div>
+                            <div class="building-name">مطحنة خشب</div>
+                            <div class="building-cost">💰100 🪨30 ⚒️10</div>
+                            <div class="building-benefit">+15 خشب/شهر</div>
+                            <div class="building-description">ينتج الخشب</div>
+                        </div>
+                        
+                        <div class="building-card" data-building="quarry" data-category="resource">
+                            <div class="building-icon">⛰️</div>
+                            <div class="building-name">محجر</div>
+                            <div class="building-cost">💰120 🪵20 ⚒️15</div>
+                            <div class="building-benefit">+10 حجر/شهر</div>
+                            <div class="building-description">يستخرج الحجر</div>
+                        </div>
+                        
+                        <div class="building-card" data-building="mine" data-category="resource">
+                            <div class="building-icon">⛏️</div>
+                            <div class="building-name">منجم</div>
+                            <div class="building-cost">💰180 🪵40 🪨30</div>
+                            <div class="building-benefit">+30 ذهب، +5 فحم</div>
+                            <div class="building-description">يستخرج المعادن</div>
+                        </div>
+                        
+                        <!-- المباني العسكرية -->
+                        <div class="building-card" data-building="barracks" data-category="military">
+                            <div class="building-icon">🏰</div>
+                            <div class="building-name">ثكنة</div>
+                            <div class="building-cost">💰200 🪵80 🪨60</div>
+                            <div class="building-benefit">+25 جيش، +15 أمان</div>
+                            <div class="building-description">يدرب الجنود</div>
+                        </div>
+                        
+                        <div class="building-card" data-building="wall" data-category="military">
+                            <div class="building-icon">🧱</div>
+                            <div class="building-name">حائط دفاعي</div>
+                            <div class="building-cost">💰60 🪨40 ⚒️5</div>
+                            <div class="building-benefit">+8 أمان</div>
+                            <div class="building-description">حماية من الهجمات</div>
+                        </div>
+                        
+                        <div class="building-card" data-building="tower" data-category="military">
+                            <div class="building-icon">🗼</div>
+                            <div class="building-name">برج مراقبة</div>
+                            <div class="building-cost">💰250 🪵60 🪨120</div>
+                            <div class="building-benefit">+25 أمان، إنذار مبكر</div>
+                            <div class="building-description">يكشف الأعداء</div>
+                        </div>
+                        
+                        <!-- مباني الخدمات -->
+                        <div class="building-card" data-building="hospital" data-category="health">
+                            <div class="building-icon">🏥</div>
+                            <div class="building-name">مستشفى</div>
+                            <div class="building-cost">💰150 🪵60 🪨40</div>
+                            <div class="building-benefit">+20 رضا، +8 سكان</div>
+                            <div class="building-description">رعاية صحية</div>
+                        </div>
+                        
+                        <div class="building-card" data-building="school" data-category="education">
+                            <div class="building-icon">🏫</div>
+                            <div class="building-name">مدرسة</div>
+                            <div class="building-cost">💰100 🪵40 🪨30</div>
+                            <div class="building-benefit">+15 رضا، بحث أسرع</div>
+                            <div class="building-description">تعليم الأطفال</div>
+                        </div>
+                        
+                        <div class="building-card" data-building="temple" data-category="religious">
+                            <div class="building-icon">⛪</div>
+                            <div class="building-name">معبد</div>
+                            <div class="building-cost">💰200 🪵80 🪨100</div>
+                            <div class="building-benefit">+25 رضا، +5 أمان</div>
+                            <div class="building-description">مركز روحي</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تبويب السياسات -->
+                <div id="policies-tab" class="tab-content">
+                    <div class="policy-section">
+                        <h4>💰 السياسة الضريبية</h4>
+                        <input type="range" id="tax-rate" min="0" max="50" value="25">
+                        <div class="policy-display">معدل الضرائب: <span id="tax-display">25%</span></div>
+                        <div class="policy-info">الضرائب العالية تزيد الدخل لكن تقلل الرضا</div>
+                    </div>
+
+                    <div class="policy-section">
+                        <h4>⚔️ الإنفاق العسكري</h4>
+                        <input type="range" id="military-spending" min="0" max="100" value="30">
+                        <div class="policy-display">الإنفاق العسكري: <span id="military-display">30%</span></div>
+                        <div class="policy-info">إنفاق أكبر على الجيش يزيد الأمان</div>
+                    </div>
+
+                    <div class="policy-section">
+                        <h4>📚 الإنفاق على التعليم</h4>
+                        <input type="range" id="education-spending" min="0" max="100" value="20">
+                        <div class="policy-display">إنفاق التعليم: <span id="education-display">20%</span></div>
+                        <div class="policy-info">التعليم يحسن الرضا والبحث العلمي</div>
+                    </div>
+
+                    <div class="policy-section">
+                        <h4>🏥 الإنفاق على الصحة</h4>
+                        <input type="range" id="health-spending" min="0" max="100" value="15">
+                        <div class="policy-display">إنفاق الصحة: <span id="health-display">15%</span></div>
+                        <div class="policy-info">الرعاية الصحية تزيد نمو السكان</div>
+                    </div>
+                </div>
+
+                <!-- تبويب العسكرية -->
+                <div id="military-tab" class="tab-content">
+                    <div class="military-section">
+                        <h4>🪖 قوات الجيش</h4>
+                        <div class="army-stats">
+                            <div class="army-stat">
+                                <span>حجم الجيش:</span>
+                                <span id="army-size">0</span>
+                            </div>
+                            <div class="army-stat">
+                                <span>قوة الدفاع:</span>
+                                <span id="defense-power">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="military-actions">
+                            <button id="recruit-army" class="action-btn">تجنيد جنود (💰100)</button>
+                            <button id="train-army" class="action-btn">تدريب الجيش (💰50)</button>
+                        </div>
+                    </div>
+
+                    <div class="defense-buildings">
+                        <h4>🏰 المباني الدفاعية</h4>
+                        <div class="defense-stats">
+                            <div class="defense-stat">
+                                <span>🧱 الأسوار:</span>
+                                <span id="walls-count">0</span>
+                            </div>
+                            <div class="defense-stat">
+                                <span>🗼 الأبراج:</span>
+                                <span id="towers-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تبويب البحث -->
+                <div id="research-tab" class="tab-content">
+                    <div class="research-tree">
+                        <h4>🔬 شجرة التطوير</h4>
+                        <div class="research-grid">
+                            <div class="research-item" data-research="agriculture">
+                                <div class="research-icon">🌾</div>
+                                <div class="research-name">الزراعة المتقدمة</div>
+                                <div class="research-cost">💰200</div>
+                                <div class="research-benefit">+50% إنتاج طعام</div>
+                            </div>
+                            
+                            <div class="research-item" data-research="medicine">
+                                <div class="research-icon">💊</div>
+                                <div class="research-name">الطب</div>
+                                <div class="research-cost">💰300</div>
+                                <div class="research-benefit">+5 رضا دائم</div>
+                            </div>
+                            
+                            <div class="research-item" data-research="engineering">
+                                <div class="research-icon">⚙️</div>
+                                <div class="research-name">الهندسة</div>
+                                <div class="research-cost">💰400</div>
+                                <div class="research-benefit">+20% دخل ذهب</div>
+                            </div>
+                            
+                            <div class="research-item" data-research="metallurgy">
+                                <div class="research-icon">🔥</div>
+                                <div class="research-name">علم المعادن</div>
+                                <div class="research-cost">💰350</div>
+                                <div class="research-benefit">يفتح مصنع الحديد</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تبويب العمال -->
+                <div id="workers-tab" class="tab-content">
+                    <div class="workers-section">
+                        <h4>👷 إدارة القوى العاملة</h4>
+                        
+                        <div class="worker-grid">
+                            <div class="worker-card">
+                                <div class="worker-icon">🪓</div>
+                                <div class="worker-name">قطاع الأخشاب</div>
+                                <div class="worker-cost">💰50</div>
+                                <div class="worker-production">+3 خشب/شهر</div>
+                                <div class="worker-count">العدد: <span id="woodcutters-count">0</span></div>
+                                <button class="action-btn small" onclick="hireWorker('woodcutters')">توظيف</button>
+                            </div>
+                            
+                            <div class="worker-card">
+                                <div class="worker-icon">⛏️</div>
+                                <div class="worker-name">عمال المناجم</div>
+                                <div class="worker-cost">💰60</div>
+                                <div class="worker-production">+2 حجر، +1 حديد</div>
+                                <div class="worker-count">العدد: <span id="miners-count">0</span></div>
+                                <button class="action-btn small" onclick="hireWorker('miners')">توظيف</button>
+                            </div>
+                            
+                            <div class="worker-card">
+                                <div class="worker-icon">🌾</div>
+                                <div class="worker-name">مزارعون</div>
+                                <div class="worker-cost">💰40</div>
+                                <div class="worker-production">+8 طعام/شهر</div>
+                                <div class="worker-count">العدد: <span id="farmers-count">0</span></div>
+                                <button class="action-btn small" onclick="hireWorker('farmers')">توظيف</button>
+                            </div>
+                            
+                            <div class="worker-card">
+                                <div class="worker-icon">🔨</div>
+                                <div class="worker-name">بناة</div>
+                                <div class="worker-cost">💰70</div>
+                                <div class="worker-production">يسرع البناء 20%</div>
+                                <div class="worker-count">العدد: <span id="builders-count">0</span></div>
+                                <button class="action-btn small" onclick="hireWorker('builders')">توظيف</button>
+                            </div>
+                            
+                            <div class="worker-card">
+                                <div class="worker-icon">🛡️</div>
+                                <div class="worker-name">حراس</div>
+                                <div class="worker-cost">💰80</div>
+                                <div class="worker-production">+5 أمان</div>
+                                <div class="worker-count">العدد: <span id="guards-count">0</span></div>
+                                <button class="action-btn small" onclick="hireWorker('guards')">توظيف</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- المنطقة الوسطى - الخريطة -->
+        <div class="main-area">
+            <div class="map-header">
+                <h2>🗺️ خريطة المملكة</h2>
+                <div class="map-controls">
+                    <button class="map-btn" id="zoom-in">🔍+</button>
+                    <button class="map-btn" id="zoom-out">🔍-</button>
+                    <select class="map-filter" id="map-filter">
+                        <option value="all">عرض الكل</option>
+                        <option value="residential">المباني السكنية</option>
+                        <option value="military">المباني العسكرية</option>
+                        <option value="resource">مباني الموارد</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="map-legend">
+                <div class="legend-item">
+                    <div class="legend-color terrain-city"></div>
+                    <span>مركز المدينة</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color terrain-plains"></div>
+                    <span>سهول</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color terrain-forest"></div>
+                    <span>غابات</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color terrain-mountains"></div>
+                    <span>جبال</span>
+                </div>
+            </div>
+            
+            <div class="map-container">
+                <div id="game-map" class="map-grid"></div>
+            </div>
+        </div>
+
+        <!-- اللوحة اليمنى - الأحداث والإحصائيات -->
+        <div class="right-panel">
+            <!-- لوحة الإنتاج -->
+            <div class="production-panel">
+                <h3>📈 إنتاج الموارد</h3>
+                <div id="production-info" class="production-stats">
+                    <div class="production-stat">
+                        <span>خشب:</span>
+                        <span class="production-value" id="wood-production">+0/شهر</span>
+                    </div>
+                    <div class="production-stat">
+                        <span>حجر:</span>
+                        <span class="production-value" id="stone-production">+0/شهر</span>
+                    </div>
+                    <div class="production-stat">
+                        <span>حديد:</span>
+                        <span class="production-value" id="iron-production">+0/شهر</span>
+                    </div>
+                    <div class="production-stat">
+                        <span>طعام:</span>
+                        <span class="production-value" id="food-production">+0/شهر</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- لوحة الأحداث -->
+            <div class="events-panel">
+                <h3>📜 سجل الأحداث الملكي</h3>
+                <div id="events-log" class="events-log"></div>
+            </div>
+
+            <!-- لوحة الإحصائيات -->
+            <div class="statistics-panel">
+                <h3>📊 إحصائيات المملكة</h3>
+                <div class="stats-category">
+                    <h4>🏘️ معلومات عامة</h4>
+                    <div class="stat-detail">
+                        <span>العام الحالي:</span>
+                        <span id="current-year-stat">1</span>
+                    </div>
+                    <div class="stat-detail">
+                        <span>عدد المنازل:</span>
+                        <span id="houses-count">0</span>
+                    </div>
+                    <div class="stat-detail">
+                        <span>عدد المزارع:</span>
+                        <span id="farms-count">0</span>
+                    </div>
+                    <div class="stat-detail">
+                        <span>النقاط:</span>
+                        <span id="game-score" class="positive">0</span>
+                    </div>
+                </div>
+
+                <div class="stats-category">
+                    <h4>⚔️ إحصائيات المعارك</h4>
+                    <div class="stat-detail">
+                        <span>معارك انتصرت:</span>
+                        <span id="battles-won" class="positive">0</span>
+                    </div>
+                    <div class="stat-detail">
+                        <span>معارك خسرت:</span>
+                        <span id="battles-lost" class="negative">0</span>
+                    </div>
+                    <div class="stat-detail">
+                        <span>أعداء هُزموا:</span>
+                        <span id="enemies-defeated" class="positive">0</span>
+                    </div>
+                </div>
+
+                <div class="stats-category">
+                    <h4>🎯 التحديات</h4>
+                    <div class="stat-detail">
+                        <span>مستوى التهديد:</span>
+                        <span id="threat-level-stat" class="neutral">منخفض</span>
+                    </div>
+                    <div class="stat-detail">
+                        <span>القرار التالي:</span>
+                        <span id="decision-timer" class="neutral">10 دقيقة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- شريط التحكم السفلي -->
+    <div class="controls-bar">
+        <div class="time-info">
+            <div class="game-time">
+                السنة <span id="year-display">1</span> - اليوم <span id="day-display">1</span>
+            </div>
+            <div class="season" id="season-display">ربيع الازدهار</div>
+        </div>
+
+        <div class="control-buttons">
+            <button id="pause-btn" class="action-btn">إيقاف ⏸️</button>
+            <button id="save-btn" class="action-btn">حفظ 💾</button>
+            <button id="load-btn" class="action-btn secondary">تحميل 📂</button>
+            <button id="settings-btn" class="action-btn secondary">إعدادات ⚙️</button>
+        </div>
+
+        <div class="game-score">
+            نقاط المجد: <span id="score-display">0</span>
+        </div>
+    </div>
+
+    <!-- مودال نهاية اللعبة -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="game-over-title">نهاية اللعبة</h3>
+            </div>
+            <div class="modal-body">
+                <p id="game-over-text">انتهت رحلتك الملكية...</p>
+                <div class="modal-actions">
+                    <button onclick="restartGame()" class="action-btn">لعبة جديدة 🔄</button>
+                    <button onclick="loadGame()" class="action-btn secondary">تحميل حفظ 📂</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
